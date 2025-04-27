@@ -6,12 +6,13 @@ import streamifier from "streamifier";
 import { getSockets } from "../lib/helper.js";
 
 const cookieOptions = {
-  maxAge: 15 * 24 * 60 * 60 * 1000,
+  maxAge: 15 * 24 * 60 * 60 * 1000, // 15 days
   sameSite: "none",
   httpOnly: true,
   secure: true,
 };
 
+// 📦 Connect Database
 const connectDB = (uri) => {
   mongoose
     .connect(uri, { dbName: "Chattu" })
@@ -21,6 +22,7 @@ const connectDB = (uri) => {
     });
 };
 
+// 🎯 Send Token for Auth
 const sendToken = (res, user, code, message) => {
   const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
 
@@ -31,19 +33,21 @@ const sendToken = (res, user, code, message) => {
   });
 };
 
+// 📢 Emit Socket Event
 const emitEvent = (req, event, users, data) => {
   const io = req.app.get("io");
   const usersSocket = getSockets(users);
   io.to(usersSocket).emit(event, data);
 };
 
+// ☁️ Upload Files to Cloudinary
 const uploadFilesToCloudinary = async (files = []) => {
   const uploadPromises = files.map((file) => {
-    const fileType = file.mimetype.split("/")[0]; // e.g., "image", "application", etc.
-
-    let resourceType = "raw"; // default raw
+    const fileType = file.mimetype.split("/")[0]; // "image", "video", "audio", "application"
+    
+    let resourceType = "raw"; // default
     if (fileType === "image" || fileType === "video" || fileType === "audio") {
-      resourceType = fileType; // image/video/audio stays correctly
+      resourceType = fileType;
     }
 
     return new Promise((resolve, reject) => {
@@ -71,12 +75,13 @@ const uploadFilesToCloudinary = async (files = []) => {
       url: result.secure_url,
     }));
   } catch (err) {
-    throw new Error("Error uploading files to cloudinary");
+    throw new Error("Error uploading files to Cloudinary");
   }
 };
 
+// 🗑️ Delete Files from Cloudinary (optional future use)
 const deletFilesFromCloudinary = async (public_ids) => {
-  // You can add cloudinary delete code later here if needed
+  // Later if needed: add cloudinary destroy code here
 };
 
 export {
