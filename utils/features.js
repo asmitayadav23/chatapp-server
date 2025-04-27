@@ -2,63 +2,61 @@ import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import { v4 as uuid } from "uuid";
 import { v2 as cloudinary } from "cloudinary";
-import { getBase64, getSockets } from "../lib/helper.js";
-import streamifier from "streamifier"; // ✅ for streaming file buffer uploads
+import streamifier from "streamifier";
+import { getSockets } from "../lib/helper.js";
 
-// ========================== Cookie Options ==========================
 const cookieOptions = {
-  maxAge: 15 * 24 * 60 * 60 * 1000, // 15 days
+  maxAge: 15 * 24 * 60 * 60 * 1000,
   sameSite: "none",
   httpOnly: true,
   secure: true,
 };
 
-// ========================== Connect Database ==========================
 const connectDB = (uri) => {
   mongoose
     .connect(uri, { dbName: "Chattu" })
     .then((data) => console.log(`Connected to DB: ${data.connection.host}`))
     .catch((err) => {
-      console.error("MongoDB connection failed:", err);
-      process.exit(1);
+      throw err;
     });
 };
 
-// ========================== Send Token ==========================
 const sendToken = (res, user, code, message) => {
   const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
 
-  return res
-    .status(code)
-    .cookie("chattu-token", token, cookieOptions)
-    .json({
-      success: true,
-      user,
-      message,
-    });
+  return res.status(code).cookie("chattu-token", token, cookieOptions).json({
+    success: true,
+    user,
+    message,
+  });
 };
 
-// ========================== Emit Event (Socket.IO) ==========================
 const emitEvent = (req, event, users, data) => {
   const io = req.app.get("io");
   const usersSocket = getSockets(users);
   io.to(usersSocket).emit(event, data);
 };
 
-// ========================== Upload Files to Cloudinary ==========================
 const uploadFilesToCloudinary = async (files = []) => {
   const uploadPromises = files.map((file) => {
+    const fileType = file.mimetype.split("/")[0]; // e.g., "image", "application", etc.
+
+    let resourceType = "raw"; // default raw
+    if (fileType === "image" || fileType === "video" || fileType === "audio") {
+      resourceType = fileType; // image/video/audio stays correctly
+    }
+
     return new Promise((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
-        { resource_type: "auto" }, // ✅ auto-detect type: image/pdf/video
+        {
+          resource_type: resourceType,
+          public_id: uuid(),
+          use_filename: true,
+          unique_filename: false,
+        },
         (error, result) => {
           if (error) return reject(error);
-
-          resolve({
-            public_id: result.public_id,
-            url: result.secure_url, // ✅ always use secure_url
-            resource_type: result.resource_type, // image, video, raw etc.
-          });
+          resolve(result);
         }
       );
 
@@ -68,27 +66,19 @@ const uploadFilesToCloudinary = async (files = []) => {
 
   try {
     const results = await Promise.all(uploadPromises);
-    return results; // ✅ array of { public_id, url, resource_type }
+    return results.map((result) => ({
+      public_id: result.public_id,
+      url: result.secure_url,
+    }));
   } catch (err) {
     throw new Error("Error uploading files to cloudinary");
   }
 };
 
-// ========================== Delete Files from Cloudinary ==========================
-const deletFilesFromCloudinary = async (public_ids = []) => {
-  const deletePromises = public_ids.map((public_id) =>
-    cloudinary.uploader.destroy(public_id, { resource_type: "auto" })
-  );
-
-  try {
-    await Promise.all(deletePromises);
-    console.log("Deleted files from Cloudinary successfully.");
-  } catch (err) {
-    console.error("Error deleting files from Cloudinary:", err);
-  }
+const deletFilesFromCloudinary = async (public_ids) => {
+  // You can add cloudinary delete code later here if needed
 };
 
-// ========================== Exports ==========================
 export {
   connectDB,
   sendToken,
