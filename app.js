@@ -30,6 +30,12 @@ dotenv.config({
   path: "./.env",
 });
 
+console.log("✅ Cloudinary ENV Check:", {
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
 const mongoURI = process.env.MONGO_URI;
 const port = process.env.PORT || 3000;
 const envMode = (process.env.NODE_ENV || "PRODUCTION").trim();

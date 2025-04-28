@@ -1,3 +1,5 @@
+// /routes/chat.js
+
 import express from "express";
 import {
   addMembers,
@@ -12,6 +14,7 @@ import {
   renameGroup,
   sendAttachments,
 } from "../controllers/chat.js";
+
 import {
   addMemberValidator,
   chatIdValidator,
@@ -21,49 +24,93 @@ import {
   sendAttachmentsValidator,
   validateHandler,
 } from "../lib/validators.js";
+
 import { isAuthenticated } from "../middlewares/auth.js";
 import { attachmentsMulter } from "../middlewares/multer.js";
 
-const app = express.Router();
+const router = express.Router();
 
-// After here user must be logged in to access the routes
+// 🆕 Create a new Group Chat
+router.post(
+  "/new",
+  isAuthenticated,
+  newGroupValidator(),
+  validateHandler,
+  newGroupChat
+);
 
-app.use(isAuthenticated);
+// 🧑‍🤝‍🧑 Get all my chats
+router.get("/my", isAuthenticated, getMyChats);
 
-app.post("/new", newGroupValidator(), validateHandler, newGroupChat);
+// 🧑‍🤝‍🧑 Get all my groups
+router.get("/my/groups", isAuthenticated, getMyGroups);
 
-app.get("/my", getMyChats);
+// ➕ Add members to a group
+router.put(
+  "/addmembers",
+  isAuthenticated,
+  addMemberValidator(),
+  validateHandler,
+  addMembers
+);
 
-app.get("/my/groups", getMyGroups);
-
-app.put("/addmembers", addMemberValidator(), validateHandler, addMembers);
-
-app.put(
+// ➖ Remove a member from group
+router.put(
   "/removemember",
+  isAuthenticated,
   removeMemberValidator(),
   validateHandler,
   removeMember
 );
 
-app.delete("/leave/:id", chatIdValidator(), validateHandler, leaveGroup);
+// 🚪 Leave a group
+router.delete(
+  "/leave/:id",
+  isAuthenticated,
+  chatIdValidator(),
+  validateHandler,
+  leaveGroup
+);
 
-// Send Attachments
-app.post(
-  "/message",
+// 📎 Send attachments (files/images/videos)
+router.post(
+  "/send-attachments",
+  isAuthenticated,
   attachmentsMulter,
   sendAttachmentsValidator(),
   validateHandler,
   sendAttachments
 );
 
-// Get Messages
-app.get("/message/:id", chatIdValidator(), validateHandler, getMessages);
+// 📨 Get all messages from a chat
+router.get(
+  "/message/:id",
+  isAuthenticated,
+  chatIdValidator(),
+  validateHandler,
+  getMessages
+);
 
-// Get Chat Details, rename,delete
-app
+// ⚙️ Get, Rename, or Delete a Chat
+router
   .route("/:id")
-  .get(chatIdValidator(), validateHandler, getChatDetails)
-  .put(renameValidator(), validateHandler, renameGroup)
-  .delete(chatIdValidator(), validateHandler, deleteChat);
+  .get(
+    isAuthenticated,
+    chatIdValidator(),
+    validateHandler,
+    getChatDetails
+  )
+  .put(
+    isAuthenticated,
+    renameValidator(),
+    validateHandler,
+    renameGroup
+  )
+  .delete(
+    isAuthenticated,
+    chatIdValidator(),
+    validateHandler,
+    deleteChat
+  );
 
-export default app;
+export default router;
