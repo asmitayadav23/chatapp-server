@@ -77,8 +77,6 @@ router.post(
   "/send-attachments",
   isAuthenticated,
   attachmentsMulter,
-  sendAttachmentsValidator(),
-  validateHandler,
   sendAttachments
 );
 
