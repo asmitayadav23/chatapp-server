@@ -19,17 +19,14 @@ const adminLogin = TryCatch(async (req, res, next) => {
   return res
     .status(200)
     .cookie("chattu-admin-token", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",           
-      maxAge: 15 * 24 * 60 * 60 * 1000, 
+      ...cookieOptions,
+      maxAge: 1000 * 60 * 15,
     })
     .json({
       success: true,
       message: "Authenticated Successfully, Welcome BOSS",
     });
 });
-
 
 const adminLogout = TryCatch(async (req, res, next) => {
   return res
