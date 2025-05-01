@@ -56,12 +56,7 @@ const app = express();
 // ✅ Enable CORS for Vercel frontend
 const FRONTEND_URL = process.env.CLIENT_URL || "https://chatapp-frontend-asmitas-projects-38bfd44f.vercel.app";
 
-app.use(
-  cors({
-    origin: FRONTEND_URL,
-    credentials: true,
-  })
-);
+app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use("/api/v1/user", userRoute);
@@ -70,11 +65,7 @@ const server = createServer(app);
 
 // ✅ Socket.IO CORS setup
 const io = new Server(server, {
-  cors: {
-    origin: FRONTEND_URL,
-    methods: ["GET", "POST"],
-    credentials: true,
-  },
+  cors: corsOptions,
 });
 // const server = createServer(app);
 // const io = new Server(server, {
@@ -89,6 +80,7 @@ app.use(cookieParser());
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/chat", chatRoute);
 app.use("/api/v1/admin", adminRoute);
+
 
 app.get("/", (req, res) => {
   res.send("Hello World");

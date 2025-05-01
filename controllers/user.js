@@ -5,6 +5,7 @@ import { TryCatch } from "../middlewares/error.js";
 import { Chat } from "../models/chat.js";
 import { Request } from "../models/request.js";
 import { User } from "../models/user.js";
+import { sendToken } from "../utils/features.js";
 import {
   cookieOptions,
   emitEvent,
@@ -53,7 +54,7 @@ const newUser = TryCatch(async (req, res, next) => {
     "Verify your Email - WhatsViz",
     `Hello ${name},\n\nPlease verify your email by clicking the following link:\n\n${verifyUrl}\n\nThis link expires in 1 hour.`
   );
-
+  // sendToken(res, user, 201, "User created successfully");
   res.status(201).json({
     success: true,
     message: "User created. Please check your email to verify your account.",
@@ -109,11 +110,7 @@ const verifyEmail = TryCatch(async (req, res, next) => {
   user.verificationToken = undefined;
   user.verificationTokenExpires = undefined;
   await user.save();
-
-  res.status(200).json({
-    success: true,
-    message: "Email verified successfully",
-  });
+  sendToken(res, user, 201, "User created successfully");
 });
 
 const searchUser = TryCatch(async (req, res) => {

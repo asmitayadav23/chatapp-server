@@ -30,8 +30,8 @@ app.get("/verify-email", verifyEmail);
 // After here user must be logged in to access the routes
 
 app.use(isAuthenticated);
-
 app.get("/me", getMyProfile);
+app.get("/friends", getMyFriends);
 
 app.get("/logout", logout);
 
@@ -52,7 +52,5 @@ app.put(
 );
 
 app.get("/notifications", getMyNotifications);
-
-app.get("/friends", getMyFriends);
 
 export default app;
