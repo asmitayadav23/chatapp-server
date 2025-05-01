@@ -88,6 +88,33 @@ const logout = TryCatch(async (req, res) => {
       message: "Logged out successfully",
     });
 });
+const verifyEmail = TryCatch(async (req, res, next) => {
+  const { token, id } = req.query;
+
+  if (!token || !id)
+    return next(new ErrorHandler("Invalid verification link", 400));
+
+  const user = await User.findById(id);
+  if (
+    !user ||
+    user.verificationToken !== token ||
+    user.verificationTokenExpires < Date.now()
+  ) {
+    return next(
+      new ErrorHandler("Verification link is invalid or has expired", 400)
+    );
+  }
+
+  user.isVerified = true;
+  user.verificationToken = undefined;
+  user.verificationTokenExpires = undefined;
+  await user.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Email verified successfully",
+  });
+});
 
 const searchUser = TryCatch(async (req, res) => {
   const { name = "" } = req.query;
@@ -261,4 +288,5 @@ export {
   newUser,
   searchUser,
   sendFriendRequest,
+  verifyEmail,
 };
