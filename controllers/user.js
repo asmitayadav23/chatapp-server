@@ -46,7 +46,7 @@ const newUser = TryCatch(async (req, res, next) => {
   });
 
   // ✅ Create frontend verification link
-  const verifyUrl = `${process.env.CLIENT_URLs}/verify-email?token=${verificationToken}&id=${user._id}`;
+  const verifyUrl = `${process.env.CLIENT_URL}/verify-email?token=${verificationToken}&id=${user._id}`;
 
   await sendEmail(
     email,
