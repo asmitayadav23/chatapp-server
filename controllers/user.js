@@ -109,7 +109,7 @@ const verifyEmail = TryCatch(async (req, res, next) => {
   user.verificationToken = undefined;
   user.verificationTokenExpires = undefined;
   await user.save();
-  sendToken(res, user, 201, "User created successfully");
+  sendToken(res, user, 200, "User verified successfully");
 });
 
 const searchUser = TryCatch(async (req, res) => {
