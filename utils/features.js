@@ -1,5 +1,8 @@
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
+import { CHATTU_TOKEN } from "../constants/config.js";
+import { User } from "../models/user.js";
+import { Message } from "../models/message.js";
 import { v4 as uuid } from "uuid";
 import { v2 as cloudinary } from "cloudinary";
 import streamifier from "streamifier";
