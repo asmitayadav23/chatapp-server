@@ -69,7 +69,7 @@ app.use("/api/v1/user", userRoute);
 const server = createServer(app); 
 
 // ✅ Socket.IO CORS setup
-const io = new SocketServer(server, {
+const io = new Server(server, {
   cors: {
     origin: FRONTEND_URL,
     methods: ["GET", "POST"],
