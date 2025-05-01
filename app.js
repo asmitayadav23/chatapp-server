@@ -4,7 +4,6 @@ import dotenv from "dotenv";
 import { errorMiddleware } from "./middlewares/error.js";
 import cookieParser from "cookie-parser";
 import { Server } from "socket.io";
-import { createServer } from "http";
 import { v4 as uuid } from "uuid";
 import cors from "cors";
 import { v2 as cloudinary } from "cloudinary";
