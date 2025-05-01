@@ -57,9 +57,9 @@ const app = express();
 const FRONTEND_URL = process.env.CLIENT_URL || "https://chatapp-frontend-asmitas-projects-38bfd44f.vercel.app";
 
 app.use(cors(corsOptions));
-
+app.use(cookieParser());
 app.use(express.json());
-app.use("/api/v1/user", userRoute);
+
 
 const server = createServer(app); 
 
@@ -75,8 +75,8 @@ const io = new Server(server, {
 app.set("io", io);
 
 // Using Middlewares Here
-app.use(cookieParser());
 
+app.use("/api/v1/user", userRoute);
 app.use("/api/v1/chat", chatRoute);
 app.use("/api/v1/admin", adminRoute);
 
