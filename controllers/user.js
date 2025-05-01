@@ -12,13 +12,14 @@ import {
   uploadFilesToCloudinary,
 } from "../utils/features.js";
 import { ErrorHandler } from "../utils/utility.js";
+import crypto from "crypto";
+import sendEmail from "../utils/sendEmail.js";
 
 // Create a new user and save it to the database and save token in cookie
 const newUser = TryCatch(async (req, res, next) => {
-  const { name, username, password, bio } = req.body;
+  const { name, username, password, bio, email } = req.body;
 
   const file = req.file;
-
   if (!file) return next(new ErrorHandler("Please Upload Avatar"));
 
   const result = await uploadFilesToCloudinary([file]);
@@ -28,15 +29,35 @@ const newUser = TryCatch(async (req, res, next) => {
     url: result[0].url,
   };
 
+  // ✅ Generate email verification token
+  const verificationToken = crypto.randomBytes(32).toString("hex");
+  const verificationTokenExpires = Date.now() + 60 * 60 * 1000; // 1 hour
+
+  // ✅ Create user with token
   const user = await User.create({
     name,
+    email,
     bio,
     username,
     password,
     avatar,
+    verificationToken,
+    verificationTokenExpires,
   });
 
-  sendToken(res, user, 201, "User created");
+  // ✅ Create frontend verification link
+  const verifyUrl = `${process.env.CLIENT_URLs}/verify-email?token=${verificationToken}&id=${user._id}`;
+
+  await sendEmail(
+    email,
+    "Verify your Email - WhatsViz",
+    `Hello ${name},\n\nPlease verify your email by clicking the following link:\n\n${verifyUrl}\n\nThis link expires in 1 hour.`
+  );
+
+  res.status(201).json({
+    success: true,
+    message: "User created. Please check your email to verify your account.",
+  });
 });
 
 // Login user and save token in cookie
@@ -45,25 +66,17 @@ const login = TryCatch(async (req, res, next) => {
 
   const user = await User.findOne({ username }).select("+password");
 
-  if (!user) return next(new ErrorHandler("Invalid Username or Password", 404));
+  if (!user)
+    return next(new ErrorHandler("Invalid Username or Password", 404));
 
   const isMatch = await compare(password, user.password);
-
   if (!isMatch)
     return next(new ErrorHandler("Invalid Username or Password", 404));
 
+  if (!user.isVerified)
+    return next(new ErrorHandler("Please verify your email before logging in", 401));
+
   sendToken(res, user, 200, `Welcome Back, ${user.name}`);
-});
-
-const getMyProfile = TryCatch(async (req, res, next) => {
-  const user = await User.findById(req.user);
-
-  if (!user) return next(new ErrorHandler("User not found", 404));
-
-  res.status(200).json({
-    success: true,
-    user,
-  });
 });
 
 const logout = TryCatch(async (req, res) => {

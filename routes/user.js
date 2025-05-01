@@ -19,12 +19,14 @@ import {
 } from "../lib/validators.js";
 import { isAuthenticated } from "../middlewares/auth.js";
 import { singleAvatar } from "../middlewares/multer.js";
+import { verifyEmail } from "../controllers/user.js";
+// Add this at the end of your routes
 
 const app = express.Router();
 
 app.post("/new", singleAvatar, registerValidator(), validateHandler, newUser);
 app.post("/login", loginValidator(), validateHandler, login);
-
+app.get("/verify-email", verifyEmail);
 // After here user must be logged in to access the routes
 
 app.use(isAuthenticated);
