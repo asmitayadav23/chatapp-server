@@ -52,10 +52,34 @@ cloudinary.config({
 });
 
 const app = express();
-const server = createServer(app);
-const io = new Server(server, {
-  cors: corsOptions,
+
+// ✅ Enable CORS for Vercel frontend
+const FRONTEND_URL = process.env.CLIENT_URL || "https://chatapp-frontend-asmitas-projects-38bfd44f.vercel.app";
+
+app.use(
+  cors({
+    origin: FRONTEND_URL,
+    credentials: true,
+  })
+);
+
+app.use(express.json());
+app.use("/api/v1/user", userRouter);
+
+const server = http.createServer(app);
+
+// ✅ Socket.IO CORS setup
+const io = new SocketServer(server, {
+  cors: {
+    origin: FRONTEND_URL,
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
 });
+// const server = createServer(app);
+// const io = new Server(server, {
+//   cors: corsOptions,
+// });
 
 app.set("io", io);
 
