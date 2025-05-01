@@ -6,10 +6,10 @@ import streamifier from "streamifier";
 import { getSockets } from "../lib/helper.js";
 
 const cookieOptions = {
-  maxAge: 15 * 24 * 60 * 60 * 1000, // 15 days
-  sameSite: "none",
   httpOnly: true,
   secure: true,
+  sameSite: "none",
+  maxAge: 15 * 24 * 60 * 60 * 1000,
 };
 
 // 📦 Connect Database
@@ -23,14 +23,22 @@ const connectDB = (uri) => {
 };
 
 // 🎯 Send Token for Auth
-const sendToken = (res, user, code, message) => {
+const sendToken = (res, user, statusCode, message) => {
   const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
 
-  return res.status(code).cookie("chattu-token", token, cookieOptions).json({
-    success: true,
-    user,
-    message,
-  });
+  res
+    .status(statusCode)
+    .cookie(CHATTU_TOKEN, token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 15 * 24 * 60 * 60 * 1000, // 15 days
+    })
+    .json({
+      success: true,
+      message,
+      user,
+    });
 };
 
 // 📢 Emit Socket Event
