@@ -25,6 +25,7 @@ import { socketAuthenticator } from "./middlewares/auth.js";
 import userRoute from "./routes/user.js";
 import chatRoute from "./routes/chat.js";
 import adminRoute from "./routes/admin.js";
+import { createServer } from "http";
 
 dotenv.config({
   path: "./.env",
@@ -66,7 +67,7 @@ app.use(
 app.use(express.json());
 app.use("/api/v1/user", userRoute);
 
-const server = http.createServer(app);
+const server = createServer(app); 
 
 // ✅ Socket.IO CORS setup
 const io = new SocketServer(server, {
