@@ -182,6 +182,43 @@ const getDashboardStats = TryCatch(async (req, res) => {
   });
 });
 
+const flagUser = TryCatch(async (req, res, next) => {
+  const { userId } = req.params;
+
+  const user = await User.findById(userId);
+  if (!user) return next(new ErrorHandler("User not found", 404));
+
+  user.flaggedByAdmin = true;
+  await user.save();
+
+  res.status(200).json({ message: "User has been flagged by admin." });
+});
+
+const blockUser = TryCatch(async (req, res, next) => {
+  const { userId } = req.params;
+
+  const user = await User.findById(userId);
+  if (!user) return next(new ErrorHandler("User not found", 404));
+
+  user.isBlocked = true;
+  await user.save();
+
+  res.status(200).json({ message: "User has been blocked." });
+});
+
+const unblockUser = TryCatch(async (req, res, next) => {
+  const { userId } = req.params;
+
+  const user = await User.findById(userId);
+  if (!user) return next(new ErrorHandler("User not found", 404));
+
+  user.isBlocked = false;
+  await user.save();
+
+  res.status(200).json({ message: "User has been unblocked." });
+});
+
+
 export {
   allUsers,
   allChats,
@@ -190,4 +227,7 @@ export {
   adminLogin,
   adminLogout,
   getAdminData,
+  flagUser,
+  blockUser,
+  unblockUser,
 };

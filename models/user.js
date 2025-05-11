@@ -42,6 +42,14 @@ const schema = new Schema(
         required: true,
       },
     },
+    isBlocked: {
+      type: Boolean,
+      default: false,
+    },
+    flaggedByAdmin: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

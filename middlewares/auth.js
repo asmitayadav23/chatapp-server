@@ -5,17 +5,26 @@ import { TryCatch } from "./error.js";
 import { CHATTU_TOKEN } from "../constants/config.js";
 import { User } from "../models/user.js";
 
-const isAuthenticated = TryCatch((req, res, next) => {
+const isAuthenticated = TryCatch(async (req, res, next) => {
   const token = req.cookies[CHATTU_TOKEN];
   if (!token)
     return next(new ErrorHandler("Please login to access this route", 401));
 
   const decodedData = jwt.verify(token, process.env.JWT_SECRET);
 
-  req.user = decodedData._id;
+  // 🔍 Fetch user from DB to check block status
+  const user = await User.findById(decodedData._id);
+  if (!user)
+    return next(new ErrorHandler("User not found", 404));
 
+  // 🚫 Check if blocked
+  if (user.isBlocked)
+    return next(new ErrorHandler("Access denied. You have been blocked by admin.", 403));
+
+  req.user = user._id;
   next();
 });
+
 
 const adminOnly = (req, res, next) => {
   const token = req.cookies["chattu-admin-token"];
@@ -48,6 +57,8 @@ const socketAuthenticator = async (err, socket, next) => {
 
     if (!user)
       return next(new ErrorHandler("Please login to access this route", 401));
+    if (user.isBlocked)
+  return next(new ErrorHandler("Access denied. You have been blocked by admin.", 403));
 
     socket.user = user;
 

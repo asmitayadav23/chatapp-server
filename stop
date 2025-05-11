@@ -1,0 +1,52 @@
+[33mbbae96b[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m 🚀 Final backend ready for deployment - CommonJS fully applied---22
+[33m5db04f1[m 🚀 Final backend ready for deployment - CommonJS fully applied---14
+[33ma9155a1[m 🚀 Final backend ready for deployment - CommonJS fully applied---13
+[33mf2cdbbc[m 🚀 Final backend ready for deployment - CommonJS fully applied---12
+[33m571966d[m 🚀 Final backend ready for deployment - CommonJS fully applied---11
+[33m3ef449d[m 🚀 Final backend ready for deployment - CommonJS fully applied---10
+[33mf0989b9[m 🚀 Final backend ready for deployment - CommonJS fully applied---9
+[33m00d5503[m 🚀 Final backend ready for deployment - CommonJS fully applied---8
+[33m15921bd[m 🚀 Final backend ready for deployment - CommonJS fully applied---7
+[33m24384a6[m 🚀 Final backend ready for deployment - CommonJS fully applied---5
+[33m1b2538a[m 🚀 Final backend ready for deployment - CommonJS fully applied---4
+[33m0fb5efa[m 🚀 Final backend ready for deployment - CommonJS fully applied---3
+[33med54af6[m 🚀 Final backend ready for deployment - CommonJS fully applied---2
+[33ma9be64a[m 🚀 Final backend ready for deployment - CommonJS fully applied
+[33med555cc[m ✨ Integrated OpenAI chatbot for admin dashboard insights-------8
+[33md25c7d0[m ✨ Integrated OpenAI chatbot for admin dashboard insights-------7
+[33mc3d26f2[m ✨ Integrated OpenAI chatbot for admin dashboard insights-------6
+[33mdd2fcc5[m ✨ Integrated OpenAI chatbot for admin dashboard insights-------5
+[33mac83e3b[m ✨ Integrated OpenAI chatbot for admin dashboard insights-------4
+[33m8b4ba88[m ✨ Integrated OpenAI chatbot for admin dashboard insights-------3
+[33m17f8890[m ✨ Integrated OpenAI chatbot for admin dashboard insights-------2
+[33m57bf18c[m ✨ Integrated OpenAI chatbot for admin dashboard insights
+[33m20ca74d[m reorder
+[33mb8afbab[m token 2
+[33m02a3091[m token
+[33ma7cce34[m withCredentials
+[33madf75cb[m userRoute
+[33m5170013[m token
+[33m327cd7d[m tokens
+[33mfe1fe18[m verifyURL
+[33mff4928d[m verifyURL
+[33me504aa6[m server.io
+[33ma89b9cb[m server
+[33m1b81d59[m http create
+[33m4cdf3f3[m userRoute
+[33mffd7e9a[m CORS Setup
+[33ma7e7d94[m added emailStep in user export
+[33m5f1a971[m user profile step
+[33m63ae12b[m New email verification
+[33m98c5c7f[m Revert "🧠 Created /chatbot backend route using OpenAI API"
+[33m5d93cb8[m 🧠 Created /chatbot backend route using OpenAI API
+[33m46e6345[m Revert "adminChatAnalysis added"
+[33mcde8b1c[m Revert "✅ Fix admin cookie config for cross-origin login (SameSite=None, Secure)"
+[33m66766b5[m ✅ Fix admin cookie config for cross-origin login (SameSite=None, Secure)
+[33me82b127[m adminChatAnalysis added
+[33m87cf897[m fix: add missing streamifier package
+[33mb1d416c[m fix: updated VITE_SERVER to deployed backend URL
+[33md0c00f3[m Fix: Update API to support FormData upload and validate Cloudinary env vars
+[33med6179d[m Fix: Final file upload correction using streamifier for Cloudinary uploads
+[33m407ea72[m Fix: Corrected Cloudinary upload logic for file/image support
+[33m89fe60b[m 🐱‍👤 Fixed Cloudinary upload stream, Corrected features.js, Full project ready
+[33ma2182eb[m Initial Commit

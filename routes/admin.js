@@ -7,6 +7,9 @@ import {
   allUsers,
   getAdminData,
   getDashboardStats,
+  flagUser,
+  blockUser,
+  unblockUser, 
 } from "../controllers/admin.js";
 import { adminLoginValidator, validateHandler } from "../lib/validators.js";
 import { adminOnly } from "../middlewares/auth.js";
@@ -28,5 +31,9 @@ app.get("/chats", allChats);
 app.get("/messages", allMessages);
 
 app.get("/stats", getDashboardStats);
+app.put("/user/:userId/flag", flagUser);
+app.put("/user/:userId/block", blockUser);
+app.put("/user/:userId/unblock", unblockUser);
+
 
 export default app;
