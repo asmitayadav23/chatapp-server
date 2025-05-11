@@ -51,19 +51,21 @@ const allUsers = TryCatch(async (req, res) => {
   const users = await User.find({});
 
   const transformedUsers = await Promise.all(
-    users.map(async ({ name, username, avatar, _id }) => {
+    users.map(async (user) => {
       const [groups, friends] = await Promise.all([
-        Chat.countDocuments({ groupChat: true, members: _id }),
-        Chat.countDocuments({ groupChat: false, members: _id }),
+        Chat.countDocuments({ groupChat: true, members: user._id }),
+        Chat.countDocuments({ groupChat: false, members: user._id }),
       ]);
 
       return {
-        name,
-        username,
-        avatar: avatar.url,
-        _id,
+        name: user.name,
+        username: user.username,
+        avatar: user.avatar.url,
+        _id: user._id,
         groups,
         friends,
+        isBlocked: user.isBlocked,
+        flaggedByAdmin: user.flaggedByAdmin,
       };
     })
   );
@@ -73,6 +75,7 @@ const allUsers = TryCatch(async (req, res) => {
     users: transformedUsers,
   });
 });
+
 
 const allChats = TryCatch(async (req, res) => {
   const chats = await Chat.find({})
