@@ -53,6 +53,21 @@ cloudinary.config({
 
 const app = express();
 
+// ✅ Handle preflight OPTIONS requests manually
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "https://chatapp-frontend-asmitas-projects-38bfd44f.vercel.app");
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+
+  next();
+});
+
+
 // ✅ Enable CORS for Vercel frontend
 const FRONTEND_URL = process.env.CLIENT_URL || "https://chatapp-frontend-asmitas-projects-38bfd44f.vercel.app";
 
